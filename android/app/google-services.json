@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "387106116756",
+    "project_id": "clone-flix-id",
+    "storage_bucket": "clone-flix-id.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387106116756:android:892ba129cc1075d1759081",
+        "android_client_info": {
+          "package_name": "com.hirarki.flix_id"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHkIt1cydyA4XmUZrLRAS6O5HfaAibWoI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
