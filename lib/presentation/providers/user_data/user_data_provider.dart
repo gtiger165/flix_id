@@ -113,6 +113,7 @@ class UserData extends _$UserData {
   }
 
   Future<void> topUp(int amount) async {
+    state = const AsyncValue.loading();
     TopUp topUp = ref.read(topUpProvider);
 
     String? userId = state.valueOrNull?.uid;
@@ -120,10 +121,14 @@ class UserData extends _$UserData {
     if (userId != null) {
       final result = await topUp(TopUpParam(amount: amount, userId: userId));
 
-      if (result.isSuccess) {
-        refreshUserData();
-        ref.read(transactionDataProvider.notifier).refreshTransactionData();
+      if (!result.isSuccess) {
+        state =
+            AsyncValue.error(FlutterError("Gagal Top Up"), StackTrace.current);
+        return;
       }
+
+      refreshUserData();
+      ref.read(transactionDataProvider.notifier).refreshTransactionData();
     }
   }
 

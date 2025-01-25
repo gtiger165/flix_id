@@ -32,33 +32,37 @@ Widget cardContent(WidgetRef ref) => Padding(
               Text(ref.watch(userDataProvider).valueOrNull?.name ?? ''),
             ],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () => ref.read(userDataProvider.notifier).topUp(100000),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
-                    borderRadius: BorderRadius.circular(5),
+          switch (ref.watch(userDataProvider)) {
+            AsyncLoading() => const CircularProgressIndicator(),
+            _ => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () =>
+                        ref.read(userDataProvider.notifier).topUp(100000),
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade800,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        color: Color(0xFFEAA94E),
+                      ),
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.add,
-                    color: Color(0xFFEAA94E),
+                  const Text(
+                    "Top Up",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 10,
+                    ),
                   ),
-                ),
+                ],
               ),
-              const Text(
-                "Top Up",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
+          },
         ],
       ),
     );

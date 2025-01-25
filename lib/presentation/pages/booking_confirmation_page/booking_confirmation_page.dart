@@ -12,6 +12,7 @@ import 'package:flix_id/presentation/providers/user_data/user_data_provider.dart
 import 'package:flix_id/presentation/widgets/back_navigation_bar.dart';
 import 'package:flix_id/presentation/widgets/network_image_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -123,9 +124,11 @@ class BookingConfirmationPage extends ConsumerWidget {
                         CreateTransaction createTransaction =
                             ref.read(createTransactionProvider);
 
+                        EasyLoading.show();
                         await createTransaction(CreateTransactionParam(
                                 transaction: transaction))
                             .then((result) {
+                          EasyLoading.dismiss();
                           switch (result) {
                             case Success(value: _):
                               ref
