@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flix_id/presentation/misc/constants.dart';
 import 'package:flix_id/presentation/providers/router/router_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends ConsumerWidget {
           ref.watch(routerProvider).routeInformationProvider,
       routerDelegate: ref.watch(routerProvider).routerDelegate,
       debugShowCheckedModeBanner: false,
+      builder: EasyLoading.init(),
     );
   }
 }
