@@ -7,12 +7,12 @@ import 'package:flix_id/presentation/misc/methods.dart';
 import 'package:flix_id/presentation/pages/booking_confirmation_page/methods/transaction_row.dart';
 import 'package:flix_id/presentation/providers/router/router_provider.dart';
 import 'package:flix_id/presentation/providers/transaction_data/transaction_data_provider.dart';
+import 'package:flix_id/presentation/providers/ui_loading_request/ui_loading_request_provider.dart';
 import 'package:flix_id/presentation/providers/usecases/create_transaction_provider.dart';
 import 'package:flix_id/presentation/providers/user_data/user_data_provider.dart';
 import 'package:flix_id/presentation/widgets/back_navigation_bar.dart';
 import 'package:flix_id/presentation/widgets/network_image_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -110,46 +110,53 @@ class BookingConfirmationPage extends ConsumerWidget {
                   width: MediaQuery.of(context).size.width - 48,
                 ),
                 verticalSpace(40),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        int transactionTime =
-                            DateTime.now().millisecondsSinceEpoch;
+                switch (ref.watch(uiLoadingRequestProvider)) {
+                  true => const Center(child: CircularProgressIndicator()),
+                  false => SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            int transactionTime =
+                                DateTime.now().millisecondsSinceEpoch;
 
-                        transaction = transaction.copyWith(
-                            transactionTime: transactionTime,
-                            id: 'flx-$transactionTime-${transaction.uid}');
+                            transaction = transaction.copyWith(
+                                transactionTime: transactionTime,
+                                id: 'flx-$transactionTime-${transaction.uid}');
 
-                        CreateTransaction createTransaction =
-                            ref.read(createTransactionProvider);
+                            CreateTransaction createTransaction =
+                                ref.read(createTransactionProvider);
 
-                        EasyLoading.show();
-                        await createTransaction(CreateTransactionParam(
-                                transaction: transaction))
-                            .then((result) {
-                          EasyLoading.dismiss();
-                          switch (result) {
-                            case Success(value: _):
+                            ref
+                                .watch(uiLoadingRequestProvider.notifier)
+                                .startLoading();
+                            await createTransaction(CreateTransactionParam(
+                                    transaction: transaction))
+                                .then((result) {
                               ref
-                                  .read(transactionDataProvider.notifier)
-                                  .refreshTransactionData();
-                              ref
-                                  .read(userDataProvider.notifier)
-                                  .refreshUserData();
-                              ref.read(routerProvider).goNamed('main');
-                            case Failed(:final message):
-                              context.showSnackBar(message);
-                          }
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: backgroundColor,
-                          backgroundColor: saffron,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10))),
-                      child: const Text('Pay Now')),
-                ),
+                                  .watch(uiLoadingRequestProvider.notifier)
+                                  .dismissLoading();
+                              switch (result) {
+                                case Success(value: _):
+                                  ref
+                                      .read(transactionDataProvider.notifier)
+                                      .refreshTransactionData();
+                                  ref
+                                      .read(userDataProvider.notifier)
+                                      .refreshUserData();
+                                  ref.read(routerProvider).goNamed('main');
+                                case Failed(:final message):
+                                  context.showSnackBar(message);
+                              }
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                              foregroundColor: backgroundColor,
+                              backgroundColor: saffron,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          child: const Text('Pay Now')),
+                    ),
+                },
               ],
             ),
           ),
